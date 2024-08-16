@@ -1,4 +1,6 @@
 import argparse
+from pathlib import Path
+
 import pymupdf
 
 def extract_text(filename):
@@ -12,10 +14,27 @@ def validated_arguments(resume, hidden, output, force, verbose):
         print(f"[!] validated_arguments(resume={resume}, hidden={hidden}, output={output}, force={force}, verbose={verbose})")
 
     # resume must be a valid path to a PDF
-    # hidden must be a valid PDF file, TXT file, or string of text
-    # output must be a valid pathname to a PDF or autogenerate one based on input file
-    # error if output name already exists if not used with force
+    if not Path.exists(resume):
+        raise FileNotFoundError(f"{resume} does not exist")
 
+    # hidden must be a valid PDF file, TXT file, or string of text
+    if Path.exists(hidden):
+        pass
+        # read from file (otherwise it's already a string)
+
+    # error if output name already exists if not used with force
+    if Path.exists(output) and not force:
+        raise FileExistsError(f"{output} exists. Use -f or --force to overwrite")
+
+    # output must be a valid pathname to a PDF or autogenerate one based on input filename
+    if output == "autogenerate":
+        for x in range(1, 10000):
+            possible_path = f"{resume}_{x}.pdf"
+            if not Path.exists(possible_path):
+                output = possible_path
+                break
+    if output == "autogenerate":
+        raise FileExistsError(f"Sorry. I couldn't devise an unused output path {resume}_X.pdf")
 
 def main(original, insertion, output):
     ''' Insert hidden text into a PDF and save it under a new name '''
