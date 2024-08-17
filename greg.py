@@ -1,4 +1,5 @@
 import argparse
+import sys
 from pathlib import Path
 
 import pymupdf
@@ -6,6 +7,19 @@ import pymupdf
 def extract_text(filename):
     ''' Extract text from file, e.g. job description, and return a string of keywords and phrases '''
     return "type 100wpm, fluent in Esperanto, Nobel Prize in customer service"
+
+def string_from_file(filename):
+    ''' Return text contents of file as a string '''
+    
+    match Path(filename).suffix:
+        case ".pdf":
+            # TODO: parse this with pymypdf
+            raise NotImplementedError(f"PDF is correct type, but not implemented yet")
+        case ".txt":
+            with open(filename, "r") as data:
+                return data.read()
+        case _:
+            raise TypeError(f"Expected PDF or TXT, not {Path(filename).suffix}")
 
 def validated_arguments(resume, hidden, output, force, verbose):
     ''' Return valid arguments for main() or raise error '''
@@ -19,8 +33,7 @@ def validated_arguments(resume, hidden, output, force, verbose):
 
     # hidden must be a valid PDF file, TXT file, or string of text
     if Path.exists(hidden):
-        pass
-        # read from file (otherwise it's already a string)
+        hidden = string_from_file(hidden)
 
     # error if output name already exists if not used with force
     if Path.exists(output) and not force:
@@ -36,16 +49,11 @@ def validated_arguments(resume, hidden, output, force, verbose):
     if output == "autogenerate":
         raise FileExistsError(f"Sorry. I couldn't devise an unused output path {resume}_X.pdf")
 
-def main(original, insertion, output):
+    return resume, hidden, output, verbose
+
+def main(args):
     ''' Insert hidden text into a PDF and save it under a new name '''
 
-    # Workflow in this block adapted from ChatGPT response
-    with pymupdf.open(original) as doc:
-        page = doc[0] # Insert into first page by default
-        page.insert_text((72, 72), insertion, fontsize=12, color=(1, 1, 1)) 
-        doc.save(output)
-
-if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog='greg', description='Insert hidden text into a PDF')
     parser.add_argument('resume', type=str, help='Original resume as PDF')
     parser.add_argument('hidden', type=str, help='PDF file, TXT file, or quote delimited string containing text to insert')
@@ -54,4 +62,12 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose mode for testing and debugging')
     args = parser.parse_args()
     original, hidden_text, output, verbose = validated_arguments(args.resume, args.hidden, args.output, args.force, args.verbose)
-    main(original, hidden_text, output, verbose)
+
+    # Workflow in this block adapted from ChatGPT response
+    with pymupdf.open(original) as doc:
+        page = doc[0] # Insert into first page by default
+        page.insert_text((72, 72), insertion, fontsize=12, color=(1, 1, 1)) 
+        doc.save(output)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
