@@ -27,6 +27,10 @@ def validated_arguments(resume, hidden, output, force, verbose):
     if verbose:
         print(f"[!] validated_arguments(resume={resume}, hidden={hidden}, output={output}, force={force}, verbose={verbose})")
 
+    resume = Path(resume)
+    hidden = Path(hidden)
+    output = Path(output)
+
     # resume must be a valid path to a PDF
     if not Path.exists(resume):
         raise FileNotFoundError(f"{resume} does not exist")
@@ -66,7 +70,7 @@ def main(args):
     # Workflow in this block adapted from ChatGPT response
     with pymupdf.open(original) as doc:
         page = doc[0] # Insert into first page by default
-        page.insert_text((72, 72), insertion, fontsize=12, color=(1, 1, 1)) 
+        page.insert_text((72, 72), hidden_text, fontsize=12, color=(1, 1, 1)) 
         doc.save(output)
 
 if __name__ == "__main__":
