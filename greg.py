@@ -4,9 +4,6 @@ from pathlib import Path
 
 import pymupdf
 
-def extract_text(filename):
-    ''' Extract text from file, e.g. job description, and return a string of keywords and phrases '''
-    return "type 100wpm, fluent in Esperanto, Nobel Prize in customer service"
 
 def string_from_file(filename):
     ''' Return text contents of file as a string '''
