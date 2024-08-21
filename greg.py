@@ -11,7 +11,7 @@ def string_from_file(filename):
     match Path(filename).suffix:
         case ".pdf":
             # TODO: parse this with pymypdf
-            raise NotImplementedError(f"PDF is correct type, but not implemented yet")
+            raise NotImplementedError("PDF is correct type, but not implemented yet")
         case ".txt":
             with open(filename, "r") as data:
                 return data.read()

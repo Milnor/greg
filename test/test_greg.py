@@ -6,14 +6,14 @@ class TestValidation(unittest.TestCase):
 
     def test_main(self):
         ''' Validate handling of command line arguments '''
-        pass
+        self.assertRaises(SystemExit, main, None)
 
     def test_string_from_file(self):
         self.assertRaises(TypeError, string_from_file, "job_description.docx")
         self.assertRaises(FileNotFoundError, string_from_file, "no_such_job_description.txt")
 
     def test_validated_arguments(self):
-        pass
+        self.assertRaises(TypeError, validated_arguments, None)
 
 class TestResults(unittest.TestCase):
 
