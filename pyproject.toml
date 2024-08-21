@@ -1,0 +1,13 @@
+[project]
+# Support Python 3.10+.
+requires-python = ">=3.10"
+
+[tool.ruff]
+# As per PEP8
+line-length = 79
+
+[tool.ruff.lint]
+extend-select = [
+    "D",    # pydocstyle
+    "E501", # line-too-long overlaps with formatters, like Black
+]
